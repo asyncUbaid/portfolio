@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import "./Navbar.css";
 
-function Navbar() {
-  const [activeSection, setActiveSection] = useState("home");
-  const [menuOpen, setMenuOpen] = useState(false);
-
   const sections = [
     "home",
     "about",
@@ -12,6 +8,9 @@ function Navbar() {
     "experience",
     "contact",
   ];
+function Navbar() {
+  const [activeSection, setActiveSection] = useState("home");
+  const [menuOpen, setMenuOpen] = useState(false);
 useEffect(() => {
   const handleScroll = () => {
     const scrollY = window.scrollY;
