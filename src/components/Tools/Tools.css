@@ -1,0 +1,31 @@
+.tools-section {
+  padding: 100px 0;
+  background: #fafafa;
+}
+
+.tools-grid {
+  margin-top: 40px;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.tool-card {
+  padding: 12px 20px;
+
+  border-radius: 30px;
+
+  background: white;
+
+  border: 1px solid #e5e7eb;
+
+  font-weight: 500;
+
+  transition: all 0.3s ease;
+}
+
+.tool-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0,0,0,.08);
+}
