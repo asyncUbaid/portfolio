@@ -36,3 +36,25 @@
     transform: rotate(360deg);
   }
 }
+.portfolio-data-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: #fff0ef;
+  color: #b42318;
+  font-size: 14px;
+  text-align: center;
+}
+
+.portfolio-data-error button {
+  flex: 0 0 auto;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: 6px 10px;
+}
+

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { FaStar } from "react-icons/fa";
 import "./Navbar.css";
 
   const sections = [
@@ -8,9 +9,12 @@ import "./Navbar.css";
     "experience",
     "contact",
   ];
-function Navbar() {
+function Navbar({ onOpenResumeEditor }) {
   const [activeSection, setActiveSection] = useState("home");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [passwordOpen, setPasswordOpen] = useState(false);
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 useEffect(() => {
   const handleScroll = () => {
     const scrollY = window.scrollY;
@@ -56,6 +60,26 @@ const handleNavClick = (section) => {
     });
 };
 
+const openPasswordModal = () => {
+  setPassword("");
+  setPasswordError("");
+  setPasswordOpen(true);
+  setMenuOpen(false);
+};
+
+const submitPassword = (event) => {
+  event.preventDefault();
+
+  if (password === "219410") {
+    setPasswordOpen(false);
+    setPassword("");
+    setPasswordError("");
+    onOpenResumeEditor?.();
+  } else {
+    setPasswordError("Incorrect master password.");
+  }
+};
+
   return (
     <nav className="navbar">
 
@@ -87,6 +111,17 @@ const handleNavClick = (section) => {
               </button>
             </li>
           ))}
+          <li>
+            <button
+              type="button"
+              className="nav-star"
+              onClick={openPasswordModal}
+              aria-label="Open resume editor"
+              title="Resume editor"
+            >
+              <FaStar />
+            </button>
+          </li>
         </ul>
 
         <button
@@ -99,6 +134,50 @@ const handleNavClick = (section) => {
         </button>
 
       </div>
+
+      {passwordOpen && (
+        <div
+          className="password-modal-backdrop"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              setPasswordOpen(false);
+            }
+          }}
+        >
+          <form className="password-modal" onSubmit={submitPassword}>
+            <button
+              type="button"
+              className="password-modal-close"
+              onClick={() => setPasswordOpen(false)}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <h2>Resume Editor Access</h2>
+            <p>Enter the master password to continue.</p>
+            <input
+              type="password"
+              value={password}
+              onChange={(event) => {
+                setPassword(event.target.value);
+                setPasswordError("");
+              }}
+              placeholder="Master password"
+              autoFocus
+              required
+            />
+            {passwordError && (
+              <p className="password-error" role="alert">
+                {passwordError}
+              </p>
+            )}
+            <button type="submit" className="password-submit">
+              Enter
+            </button>
+          </form>
+        </div>
+      )}
 
     </nav>
   );

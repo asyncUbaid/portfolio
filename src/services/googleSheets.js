@@ -2,36 +2,54 @@
 
 import axios from "axios";
 
-const SHEET_ID = process.env.REACT_APP_GOOGLE_SHEET_ID;
+const SHEET_ID = process.env.REACT_APP_GOOGLE_SHEET_ID?.trim();
 
-const BASE_URL = `https://opensheet.elk.sh/${SHEET_ID}`;
+const getBaseUrl = () => {
+  if (!SHEET_ID || SHEET_ID === "your_google_sheet_id") {
+    throw new Error(
+      "Google Sheets is not configured. Set REACT_APP_GOOGLE_SHEET_ID in your .env.local file and restart the development server."
+    );
+  }
 
-export const getProfile = async () => {   
-  const response = await axios.get(`${BASE_URL}/Profile`);
-  return response.data[0];
+  return `https://opensheet.elk.sh/${SHEET_ID}`;
+};
+
+const getSheet = async (sheetName) => {
+  try {
+    const response = await axios.get(`${getBaseUrl()}/${sheetName}`);
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        `Could not load the "${sheetName}" worksheet (HTTP ${error.response.status}). Check the spreadsheet ID, worksheet tab name, and sharing permissions.`
+      );
+    }
+
+    throw error;
+  }
+};
+
+export const getProfile = async () => {
+  const rows = await getSheet("Profile");
+  return rows[0];
 };
 
 export const getSkills = async () => {
-  const response = await axios.get(`${BASE_URL}/Skills`);
-  return response.data;
+  return getSheet("Skills");
 };
 
 export const getExperience = async () => {
-  const response = await axios.get(`${BASE_URL}/Experience`);
-  return response.data;
+  return getSheet("Experience");
 };
 
 export const getTools = async () => {
-  const response = await axios.get(`${BASE_URL}/Tools`);
-  return response.data;
+  return getSheet("Tools");
 };
 
 export const getSocials = async () => {
-  const response = await axios.get(`${BASE_URL}/Socials`);
-  return response.data;
+  return getSheet("Socials");
 };
 
 export const getStats = async () => {
-  const response = await axios.get(`${BASE_URL}/Stats`);
-  return response.data;
+  return getSheet("Stats");
 };

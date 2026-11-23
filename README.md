@@ -1,5 +1,19 @@
 # Getting Started with Create React App
 
+## Google Sheets configuration
+
+The portfolio loads its content from a published Google spreadsheet. Create a
+`.env.local` file in the project root and set:
+
+```env
+REACT_APP_GOOGLE_SHEET_ID=your_spreadsheet_id
+```
+
+Use the spreadsheet ID from its URL, ensure the spreadsheet is accessible to
+the OpenSheet service, and verify that the worksheet tabs are named `Profile`,
+`Skills`, `Experience`, `Tools`, `Socials`, and `Stats`. Restart the development
+server after changing environment variables. `.env.local` is ignored by Git.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

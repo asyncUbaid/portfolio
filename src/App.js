@@ -11,17 +11,22 @@ import usePortfolioData from "./hooks/usePortfolioData";
 import Stats from "./components/Stats/Stats";
 import { useEffect, useState } from "react";
 import Loader from "./components/Loader/Loader";
+import ResumeEditor from "./components/ResumeEditor/ResumeEditor";
+import "./App.css";
 
 function App() {
 
     const [loading, setLoading] = useState(true);
+  const [showResumeEditor, setShowResumeEditor] = useState(false);
   const {
     profile,
     skills,
     experience,
     tools,
     socials,
-    stats
+    stats,
+    error: portfolioError,
+    retry: retryPortfolioData
   } = usePortfolioData();
 
     useEffect(() => {
@@ -35,9 +40,23 @@ function App() {
   if (loading) {
     return <Loader />;
   }
+
+  if (showResumeEditor) {
+    return <ResumeEditor onClose={() => setShowResumeEditor(false)} />;
+  }
+
   return (
     <>
-<Navbar />
+<Navbar onOpenResumeEditor={() => setShowResumeEditor(true)} />
+
+{portfolioError && (
+  <div className="portfolio-data-error" role="alert">
+    <p>{portfolioError}</p>
+    <button type="button" onClick={retryPortfolioData}>
+      Retry
+    </button>
+  </div>
+)}
 
 <Hero profile={profile} />
 
