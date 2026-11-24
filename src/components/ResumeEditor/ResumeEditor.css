@@ -138,6 +138,19 @@
   font-size: 11px;
 }
 
+.resume-import-hint {
+  color: #777;
+  font-size: 11px;
+  line-height: 1.5;
+  margin-top: 12px;
+}
+
+.resume-text-import .editor-field textarea {
+  min-height: 220px;
+  font-family: monospace;
+  font-size: 11px;
+}
+
 .success,
 .error,
 .info {

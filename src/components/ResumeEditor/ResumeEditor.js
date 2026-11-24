@@ -3,6 +3,7 @@ import React, { useRef, useState } from "react";
 import * as pdfjsLib from "pdfjs-dist";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import { parseResumeText } from "./resumeText";
 import "./ResumeEditor.css";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
@@ -317,11 +318,14 @@ function extractResume(text) {
   };
 }
 
+const hasText = (value) => typeof value === "string" && value.trim().length > 0;
+
 function ResumeEditor({ onClose }) {
   const [resume, setResume] = useState(initialResume);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [resumeText, setResumeText] = useState("");
 
   const resumeRef = useRef(null);
 
@@ -385,6 +389,18 @@ function ResumeEditor({ onClose }) {
     } finally {
       setLoading(false);
       e.target.value = "";
+    }
+  };
+
+  const importResumeText = () => {
+    setError("");
+    setMessage("");
+
+    try {
+      setResume(parseResumeText(resumeText));
+      setMessage("Resume text imported. Review the fields before downloading.");
+    } catch (err) {
+      setError(err.message || "Could not import the resume text.");
     }
   };
 
@@ -458,21 +474,29 @@ function ResumeEditor({ onClose }) {
     </section>
   );
 
-  const Project = ({ project }) => (
-    <div className="project-item">
-      <h3>{project.title}</h3>
+  const Project = ({ project }) => {
+    const bullets = project.bullets.filter(hasText);
 
-      <ul>
-        {project.bullets.map((bullet, i) => (
-          <li key={i}>{bullet}</li>
-        ))}
-      </ul>
+    return (
+      <div className="project-item">
+        {hasText(project.title) && <h3>{project.title}</h3>}
 
-      <p className="tech-stack">
-        <strong>Tech Stack:</strong> {project.techStack}
-      </p>
-    </div>
-  );
+        {bullets.length > 0 && (
+          <ul>
+            {bullets.map((bullet, i) => (
+              <li key={i}>{bullet}</li>
+            ))}
+          </ul>
+        )}
+
+        {hasText(project.techStack) && (
+          <p className="tech-stack">
+            <strong>Tech Stack:</strong> {project.techStack}
+          </p>
+        )}
+      </div>
+    );
+  };
 
   const updateBullet = (field, index, bulletIndex, value) => {
     setResume((prev) => ({
@@ -527,6 +551,32 @@ function ResumeEditor({ onClose }) {
     </label>
   );
 
+  const visibleSkills = resume.skills.filter(
+    (skill) => hasText(skill.category) || hasText(skill.value)
+  );
+  const visibleExperience = resume.experience.filter(
+    (item) =>
+      hasText(item.role) ||
+      hasText(item.company) ||
+      hasText(item.date) ||
+      item.bullets.some(hasText)
+  );
+  const visibleProjects = resume.projects.filter(
+    (project) =>
+      hasText(project.title) ||
+      hasText(project.techStack) ||
+      project.bullets.some(hasText)
+  );
+  const visibleEducation = resume.education.filter(
+    (item) =>
+      hasText(item.degree) ||
+      hasText(item.institution) ||
+      hasText(item.date)
+  );
+  const visibleAchievements = resume.achievements.filter(
+    (item) => hasText(item.title) || hasText(item.description)
+  );
+
   return (
     <div className="app-container">
       <header className="topbar">
@@ -562,6 +612,30 @@ function ResumeEditor({ onClose }) {
             <strong>↑ Upload another PDF</strong>
             <small>PDF files only</small>
           </label>
+
+          <details className="resume-text-import">
+            <summary>Paste resume text</summary>
+            <p className="resume-import-hint">
+              Paste a Markdown resume or JSON matching the resume fields, then
+              import it to fill the form.
+            </p>
+            <label className="editor-field">
+              <span>Resume text or JSON</span>
+              <textarea
+                rows={14}
+                value={resumeText}
+                onChange={(e) => setResumeText(e.target.value)}
+                placeholder="# Your Name&#10;&#10;## PROFESSIONAL SUMMARY&#10;..."
+              />
+            </label>
+            <button
+              className="add-btn"
+              type="button"
+              onClick={importResumeText}
+            >
+              Import into form
+            </button>
+          </details>
 
           {loading && <p className="info">{ "Extracting PDF..." }</p>}
           {message && <p className="success">{message}</p>}
@@ -729,77 +803,100 @@ function ResumeEditor({ onClose }) {
 
           <div className="pages-wrapper">
             <div className="resume-page" ref={resumeRef}>
-              <div className="resume-identity">
-                <h1>{resume.name}</h1>
-                <p>
-                  {[resume.location, resume.email, resume.phone, resume.website]
-                    .filter(Boolean).join(" | ")}
-                </p>
-                <p>
-                  {[resume.linkedin, resume.github].filter(Boolean).join(" | ")}
-                </p>
-              </div>
+              {(hasText(resume.name) ||
+                hasText(resume.location) ||
+                hasText(resume.email) ||
+                hasText(resume.phone) ||
+                hasText(resume.website) ||
+                hasText(resume.linkedin) ||
+                hasText(resume.github)) && (
+                <div className="resume-identity">
+                  {hasText(resume.name) && <h1>{resume.name}</h1>}
+                  {[
+                    resume.location,
+                    resume.email,
+                    resume.phone,
+                    resume.website,
+                  ].some(hasText) && (
+                    <p>
+                      {[resume.location, resume.email, resume.phone, resume.website]
+                        .filter(hasText).join(" | ")}
+                    </p>
+                  )}
+                  {[resume.linkedin, resume.github].some(hasText) && (
+                    <p>
+                      {[resume.linkedin, resume.github].filter(hasText).join(" | ")}
+                    </p>
+                  )}
+                </div>
+              )}
 
-              <Section title="Summary">
-                <p className="body-text">{resume.summary}</p>
-              </Section>
+              {hasText(resume.summary) && (
+                <Section title="Summary">
+                  <p className="body-text">{resume.summary}</p>
+                </Section>
+              )}
 
-              <Section title="Skills">
+              {visibleSkills.length > 0 && <Section title="Skills">
                 <div className="skills-table">
-                  {resume.skills.map((skill, i) => (
+                  {visibleSkills.map((skill, i) => (
                     <div className="skill-row" key={i}>
-                      <strong>{skill.category}</strong>
-                      <span>{skill.value}</span>
+                      {hasText(skill.category) && <strong>{skill.category}</strong>}
+                      {hasText(skill.value) && <span>{skill.value}</span>}
                     </div>
                   ))}
                 </div>
-              </Section>
+              </Section>}
 
-              <Section title="Work Experience">
-                {resume.experience.map((item, i) => (
+              {visibleExperience.length > 0 && <Section title="Work Experience">
+                {visibleExperience.map((item, i) => (
                   <div className="experience-item" key={i}>
                     <div className="experience-top">
-                      <strong>{item.role}</strong>
-                      <em>{item.date}</em>
+                      {hasText(item.role) && <strong>{item.role}</strong>}
+                      {hasText(item.date) && <em>{item.date}</em>}
                     </div>
-                    <em className="company">{item.company}</em>
-                    <ul className="resume-list">
-                      {item.bullets.map((bullet, j) => (
-                        <li key={j}>{bullet}</li>
-                      ))}
-                    </ul>
+                    {hasText(item.company) && (
+                      <em className="company">{item.company}</em>
+                    )}
+                    {item.bullets.some(hasText) && (
+                      <ul className="resume-list">
+                        {item.bullets.filter(hasText).map((bullet, j) => (
+                          <li key={j}>{bullet}</li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 ))}
-              </Section>
+              </Section>}
 
-              <Section title="Projects">
-                {resume.projects.map((project, i) => (
+              {visibleProjects.length > 0 && <Section title="Projects">
+                {visibleProjects.map((project, i) => (
                   <Project project={project} key={i} />
                 ))}
-              </Section>
+              </Section>}
 
-              <Section title="Education">
-                {resume.education.map((item, i) => (
+              {visibleEducation.length > 0 && <Section title="Education">
+                {visibleEducation.map((item, i) => (
                   <div className="education-item" key={i}>
                     <div className="education-top">
-                      <strong>{item.degree}</strong>
-                      <em>{item.date}</em>
+                      {hasText(item.degree) && <strong>{item.degree}</strong>}
+                      {hasText(item.date) && <em>{item.date}</em>}
                     </div>
-                    <em>{item.institution}</em>
+                    {hasText(item.institution) && <em>{item.institution}</em>}
                   </div>
                 ))}
-              </Section>
+              </Section>}
 
-              <Section title="Achievements">
+              {visibleAchievements.length > 0 && <Section title="Achievements">
                 <ul className="achievement-list">
-                  {resume.achievements.map((item, i) => (
+                  {visibleAchievements.map((item, i) => (
                     <li key={i}>
-                      <strong>{item.title}</strong>
-                      {item.description && ` – ${item.description}`}
+                      {hasText(item.title) && <strong>{item.title}</strong>}
+                      {hasText(item.description) && ` – ${item.description}`}
                     </li>
                   ))}
                 </ul>
-              </Section>
+              </Section>}
             </div>
           </div>
         </section>
