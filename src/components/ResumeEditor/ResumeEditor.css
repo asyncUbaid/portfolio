@@ -145,6 +145,34 @@
   margin-top: 12px;
 }
 
+.section-spacing-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.section-spacing-controls .add-btn {
+  margin-top: 0;
+}
+
+.section-spacing-controls .secondary-btn {
+  padding: 8px 10px;
+  font-size: 11px;
+}
+
+.section-spacing-controls .secondary-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.section-spacing-count {
+  color: #777;
+  font-size: 11px;
+  margin-top: 8px;
+}
+
 .resume-text-import .editor-field textarea {
   min-height: 220px;
   font-family: monospace;
@@ -371,7 +399,7 @@
 }
 
 .resume-section {
-  margin-bottom: 29px;
+  margin-bottom: calc(29px + var(--extra-section-spacing, 0px));
 }
 
 .section-title {

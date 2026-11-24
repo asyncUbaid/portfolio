@@ -319,9 +319,11 @@ function extractResume(text) {
 }
 
 const hasText = (value) => typeof value === "string" && value.trim().length > 0;
+const BLANK_LINE_HEIGHT = 19;
 
 function ResumeEditor({ onClose }) {
   const [resume, setResume] = useState(initialResume);
+  const [extraBlankLines, setExtraBlankLines] = useState(0);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -637,6 +639,35 @@ function ResumeEditor({ onClose }) {
             </button>
           </details>
 
+          <details className="section-spacing-settings">
+            <summary>Section spacing</summary>
+            <p className="resume-import-hint">
+              Add blank-line-sized gaps between resume sections.
+            </p>
+            <div className="section-spacing-controls">
+              <button
+                className="add-btn"
+                type="button"
+                onClick={() => setExtraBlankLines((count) => count + 1)}
+              >
+                + Add blank line
+              </button>
+              <button
+                className="secondary-btn"
+                type="button"
+                disabled={extraBlankLines === 0}
+                onClick={() =>
+                  setExtraBlankLines((count) => Math.max(0, count - 1))
+                }
+              >
+                Remove blank line
+              </button>
+            </div>
+            <p className="section-spacing-count" aria-live="polite">
+              Extra blank lines: {extraBlankLines}
+            </p>
+          </details>
+
           {loading && <p className="info">{ "Extracting PDF..." }</p>}
           {message && <p className="success">{message}</p>}
           {error && <p className="error">{error}</p>}
@@ -802,7 +833,13 @@ function ResumeEditor({ onClose }) {
           </div>
 
           <div className="pages-wrapper">
-            <div className="resume-page" ref={resumeRef}>
+            <div
+              className="resume-page"
+              ref={resumeRef}
+              style={{
+                "--extra-section-spacing": `${extraBlankLines * BLANK_LINE_HEIGHT}px`,
+              }}
+            >
               {(hasText(resume.name) ||
                 hasText(resume.location) ||
                 hasText(resume.email) ||
