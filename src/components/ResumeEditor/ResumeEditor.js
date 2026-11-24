@@ -323,7 +323,7 @@ const BLANK_LINE_HEIGHT = 19;
 
 function ResumeEditor({ onClose }) {
   const [resume, setResume] = useState(initialResume);
-  const [extraBlankLines, setExtraBlankLines] = useState(0);
+  const [sectionSpacing, setSectionSpacing] = useState({});
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -469,12 +469,58 @@ function ResumeEditor({ onClose }) {
     }
   };
 
-  const Section = ({ title, children }) => (
-    <section className="resume-section">
+  const Section = ({ title, spacingKey, children }) => (
+    <section
+      className="resume-section"
+      style={{
+        "--extra-section-spacing": `${
+          (sectionSpacing[spacingKey] || 0) * BLANK_LINE_HEIGHT
+        }px`,
+      }}
+    >
       <h2 className="section-title">{title}</h2>
       {children}
     </section>
   );
+
+  const SectionSpacingControl = ({ sectionKey, label }) => {
+    const blankLines = sectionSpacing[sectionKey] || 0;
+
+    return (
+      <div className="section-spacing-control">
+        <span>
+          Space after {label}: {blankLines} blank line{blankLines === 1 ? "" : "s"}
+        </span>
+        <div className="section-spacing-controls">
+          <button
+            className="add-btn"
+            type="button"
+            onClick={() =>
+              setSectionSpacing((current) => ({
+                ...current,
+                [sectionKey]: (current[sectionKey] || 0) + 1,
+              }))
+            }
+          >
+            + Add blank line
+          </button>
+          <button
+            className="secondary-btn"
+            type="button"
+            disabled={blankLines === 0}
+            onClick={() =>
+              setSectionSpacing((current) => ({
+                ...current,
+                [sectionKey]: Math.max(0, (current[sectionKey] || 0) - 1),
+              }))
+            }
+          >
+            Remove blank line
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   const Project = ({ project }) => {
     const bullets = project.bullets.filter(hasText);
@@ -639,35 +685,6 @@ function ResumeEditor({ onClose }) {
             </button>
           </details>
 
-          <details className="section-spacing-settings">
-            <summary>Section spacing</summary>
-            <p className="resume-import-hint">
-              Add blank-line-sized gaps between resume sections.
-            </p>
-            <div className="section-spacing-controls">
-              <button
-                className="add-btn"
-                type="button"
-                onClick={() => setExtraBlankLines((count) => count + 1)}
-              >
-                + Add blank line
-              </button>
-              <button
-                className="secondary-btn"
-                type="button"
-                disabled={extraBlankLines === 0}
-                onClick={() =>
-                  setExtraBlankLines((count) => Math.max(0, count - 1))
-                }
-              >
-                Remove blank line
-              </button>
-            </div>
-            <p className="section-spacing-count" aria-live="polite">
-              Extra blank lines: {extraBlankLines}
-            </p>
-          </details>
-
           {loading && <p className="info">{ "Extracting PDF..." }</p>}
           {message && <p className="success">{message}</p>}
           {error && <p className="error">{error}</p>}
@@ -682,6 +699,10 @@ function ResumeEditor({ onClose }) {
             {editorInput("LinkedIn", resume.linkedin, (v) => updateField("linkedin", v))}
             {editorInput("GitHub", resume.github, (v) => updateField("github", v))}
           </details>
+          <SectionSpacingControl
+            sectionKey="identity"
+            label="Personal Information"
+          />
 
           <details open>
             <summary>Professional Summary</summary>
@@ -692,6 +713,7 @@ function ResumeEditor({ onClose }) {
               true
             )}
           </details>
+          <SectionSpacingControl sectionKey="summary" label="Summary" />
 
           <details open>
             <summary>Skills</summary>
@@ -715,6 +737,7 @@ function ResumeEditor({ onClose }) {
               + Add skill category
             </button>
           </details>
+          <SectionSpacingControl sectionKey="skills" label="Skills" />
 
           <details open>
             <summary>Work Experience</summary>
@@ -748,6 +771,7 @@ function ResumeEditor({ onClose }) {
               + Add experience
             </button>
           </details>
+          <SectionSpacingControl sectionKey="experience" label="Work Experience" />
 
           <details open>
             <summary>Projects</summary>
@@ -780,6 +804,7 @@ function ResumeEditor({ onClose }) {
               + Add project
             </button>
           </details>
+          <SectionSpacingControl sectionKey="projects" label="Projects" />
 
           <details open>
             <summary>Education</summary>
@@ -799,6 +824,7 @@ function ResumeEditor({ onClose }) {
               + Add education
             </button>
           </details>
+          <SectionSpacingControl sectionKey="education" label="Education" />
 
           <details open>
             <summary>Achievements</summary>
@@ -817,6 +843,7 @@ function ResumeEditor({ onClose }) {
               + Add achievement
             </button>
           </details>
+          <SectionSpacingControl sectionKey="achievements" label="Achievements" />
 
           <button className="primary-btn full-btn" onClick={downloadResume}>
             Download Updated Resume
@@ -833,13 +860,7 @@ function ResumeEditor({ onClose }) {
           </div>
 
           <div className="pages-wrapper">
-            <div
-              className="resume-page"
-              ref={resumeRef}
-              style={{
-                "--extra-section-spacing": `${extraBlankLines * BLANK_LINE_HEIGHT}px`,
-              }}
-            >
+            <div className="resume-page" ref={resumeRef}>
               {(hasText(resume.name) ||
                 hasText(resume.location) ||
                 hasText(resume.email) ||
@@ -847,7 +868,14 @@ function ResumeEditor({ onClose }) {
                 hasText(resume.website) ||
                 hasText(resume.linkedin) ||
                 hasText(resume.github)) && (
-                <div className="resume-identity">
+                <div
+                  className="resume-identity"
+                  style={{
+                    "--extra-section-spacing": `${
+                      (sectionSpacing.identity || 0) * BLANK_LINE_HEIGHT
+                    }px`,
+                  }}
+                >
                   {hasText(resume.name) && <h1>{resume.name}</h1>}
                   {[
                     resume.location,
@@ -869,12 +897,12 @@ function ResumeEditor({ onClose }) {
               )}
 
               {hasText(resume.summary) && (
-                <Section title="Summary">
+                <Section title="Summary" spacingKey="summary">
                   <p className="body-text">{resume.summary}</p>
                 </Section>
               )}
 
-              {visibleSkills.length > 0 && <Section title="Skills">
+              {visibleSkills.length > 0 && <Section title="Skills" spacingKey="skills">
                 <div className="skills-table">
                   {visibleSkills.map((skill, i) => (
                     <div className="skill-row" key={i}>
@@ -885,7 +913,7 @@ function ResumeEditor({ onClose }) {
                 </div>
               </Section>}
 
-              {visibleExperience.length > 0 && <Section title="Work Experience">
+              {visibleExperience.length > 0 && <Section title="Work Experience" spacingKey="experience">
                 {visibleExperience.map((item, i) => (
                   <div className="experience-item" key={i}>
                     <div className="experience-top">
@@ -906,13 +934,13 @@ function ResumeEditor({ onClose }) {
                 ))}
               </Section>}
 
-              {visibleProjects.length > 0 && <Section title="Projects">
+              {visibleProjects.length > 0 && <Section title="Projects" spacingKey="projects">
                 {visibleProjects.map((project, i) => (
                   <Project project={project} key={i} />
                 ))}
               </Section>}
 
-              {visibleEducation.length > 0 && <Section title="Education">
+              {visibleEducation.length > 0 && <Section title="Education" spacingKey="education">
                 {visibleEducation.map((item, i) => (
                   <div className="education-item" key={i}>
                     <div className="education-top">
@@ -924,7 +952,7 @@ function ResumeEditor({ onClose }) {
                 ))}
               </Section>}
 
-              {visibleAchievements.length > 0 && <Section title="Achievements">
+              {visibleAchievements.length > 0 && <Section title="Achievements" spacingKey="achievements">
                 <ul className="achievement-list">
                   {visibleAchievements.map((item, i) => (
                     <li key={i}>

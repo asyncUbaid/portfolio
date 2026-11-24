@@ -153,6 +153,15 @@
   margin-top: 10px;
 }
 
+.section-spacing-control {
+  padding: 8px 0 14px;
+}
+
+.section-spacing-control > span {
+  color: #777;
+  font-size: 11px;
+}
+
 .section-spacing-controls .add-btn {
   margin-top: 0;
 }
@@ -165,12 +174,6 @@
 .section-spacing-controls .secondary-btn:disabled {
   cursor: not-allowed;
   opacity: 0.55;
-}
-
-.section-spacing-count {
-  color: #777;
-  font-size: 11px;
-  margin-top: 8px;
 }
 
 .resume-text-import .editor-field textarea {
@@ -382,7 +385,7 @@
 }
 
 .resume-identity {
-  margin-bottom: 45px;
+  margin-bottom: calc(45px + var(--extra-section-spacing, 0px));
 }
 
 .resume-identity h1 {
@@ -473,23 +476,15 @@
 }
 
 .resume-list {
-  padding-left: 0;
-  list-style: none;
+  padding-left: 25px;
+  list-style: disc;
   font-size: 14px;
-  line-height: 1.42;
+  line-height: 1.4;
 }
 
 .resume-list li {
   margin-bottom: 1px;
   overflow-wrap: anywhere;
-}
-
-.resume-list li:not(:first-child)::before {
-  content: "• ";
-}
-
-.resume-list li:first-child {
-  padding-left: 6px;
 }
 
 .project-item {
