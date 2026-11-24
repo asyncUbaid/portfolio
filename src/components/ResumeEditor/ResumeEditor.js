@@ -323,8 +323,7 @@ function ResumeEditor({ onClose }) {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  const page1Ref = useRef(null);
-  const page2Ref = useRef(null);
+  const resumeRef = useRef(null);
 
   const updateField = (field, value) => {
     setResume((prev) => ({
@@ -396,27 +395,45 @@ function ResumeEditor({ onClose }) {
 
       const pdf = new jsPDF("p", "mm", "a4");
 
-      const pages = [page1Ref.current, page2Ref.current];
+      const canvas = await html2canvas(resumeRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        logging: false,
+      });
+      const pageHeight = Math.round(canvas.width * 297 / 210);
 
-      for (let i = 0; i < pages.length; i++) {
-        const canvas = await html2canvas(pages[i], {
-          scale: 2,
-          useCORS: true,
-          backgroundColor: "#ffffff",
-          logging: false,
-        });
+      for (let y = 0; y < canvas.height; y += pageHeight) {
+        const sliceHeight = Math.min(pageHeight, canvas.height - y);
+        const pageCanvas = document.createElement("canvas");
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = sliceHeight;
+        const pageContext = pageCanvas.getContext("2d");
+        if (!pageContext) {
+          throw new Error("Unable to create a canvas for the PDF.");
+        }
 
-        const image = canvas.toDataURL("image/jpeg", 0.98);
+        pageContext.drawImage(
+          canvas,
+          0,
+          y,
+          canvas.width,
+          sliceHeight,
+          0,
+          0,
+          canvas.width,
+          sliceHeight
+        );
 
-        if (i > 0) pdf.addPage();
+        if (y > 0) pdf.addPage();
 
         pdf.addImage(
-          image,
+          pageCanvas.toDataURL("image/jpeg", 0.98),
           "JPEG",
           0,
           0,
           210,
-          297,
+          297 * sliceHeight / pageHeight,
           undefined,
           "FAST"
         );
@@ -515,7 +532,7 @@ function ResumeEditor({ onClose }) {
       <header className="topbar">
         <div>
           <h1>Resume Editor</h1>
-          <p>Edit your resume in its original two-page format.</p>
+          <p>Edit your resume and its content will flow across pages.</p>
         </div>
         <div className="resume-editor-actions">
           {onClose && (
@@ -705,14 +722,13 @@ function ResumeEditor({ onClose }) {
           <div className="preview-heading">
             <div>
               <h2>Live Preview</h2>
-              <p>Original two-page resume layout</p>
+              <p>Content flows to additional A4 pages automatically.</p>
             </div>
-            <span>A4 · 2 PAGES</span>
+            <span>A4 · AUTO PAGINATION</span>
           </div>
 
           <div className="pages-wrapper">
-            {/* PAGE 1 */}
-            <div className="resume-page" ref={page1Ref}>
+            <div className="resume-page" ref={resumeRef}>
               <div className="resume-identity">
                 <h1>{resume.name}</h1>
                 <p>
@@ -757,19 +773,10 @@ function ResumeEditor({ onClose }) {
               </Section>
 
               <Section title="Projects">
-                {resume.projects.slice(0, 1).map((project, i) => (
+                {resume.projects.map((project, i) => (
                   <Project project={project} key={i} />
                 ))}
               </Section>
-            </div>
-
-            {/* PAGE 2 */}
-            <div className="resume-page" ref={page2Ref}>
-              <div className="second-page-projects">
-                {resume.projects.slice(1).map((project, i) => (
-                  <Project project={project} key={i} />
-                ))}
-              </div>
 
               <Section title="Education">
                 {resume.education.map((item, i) => (
