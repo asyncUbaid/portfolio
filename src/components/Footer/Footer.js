@@ -12,7 +12,7 @@ function Footer() {
 
           <div className="footer-left">
             <h3>Ubaid Ansari</h3>
-            <p>Mobile App Developer</p>
+            <p>AI Engineer/ Software Developer</p>
           </div>
 
           <div className="footer-right">

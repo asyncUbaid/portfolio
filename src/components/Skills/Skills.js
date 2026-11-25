@@ -19,16 +19,6 @@ function Skills({ skills }) {
 
               <div className="skill-header">
                 <span>{skill.Skill}</span>
-                <span>{skill.Level}%</span>
-              </div>
-
-              <div className="progress-bar">
-                <div
-                  className="progress-fill"
-                  style={{
-                    width: `${skill.Level}%`
-                  }}
-                />
               </div>
 
               <small>{skill.Category}</small>
