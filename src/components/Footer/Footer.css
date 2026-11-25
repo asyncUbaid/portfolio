@@ -1,6 +1,6 @@
 .footer {
   background:
-    radial-gradient(circle at 85% 0%, rgba(91,92,226,.28), transparent 22rem),
+    radial-gradient(circle at 85% 0%, color-mix(in srgb, var(--primary) 28%, transparent), transparent 22rem),
     #0d1222;
   color: white;
   margin-top: 40px;
@@ -25,7 +25,7 @@
 }
 
 .contact-btn {
-  background: linear-gradient(135deg, #6567ed, #5556d9);
+  background: var(--theme-gradient);
   color: white;
 
   border: none;
@@ -43,7 +43,7 @@
 }
 
 .contact-btn:hover {
-  background: #1d4ed8;
+  background: color-mix(in srgb, var(--primary) 82%, #000);
   transform: translateY(-2px);
 }
 

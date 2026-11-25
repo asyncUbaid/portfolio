@@ -53,3 +53,37 @@ export const getSocials = async () => {
 export const getStats = async () => {
   return getSheet("Stats");
 };
+
+export const getColors = async () => {
+  const rows = await getSheet("Colors");
+  const colors = rows.map((row) => ({
+    role: row.Role?.trim(),
+    hex: row.Hex?.trim()
+  }));
+  const validHex = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+
+  if (colors.some(({ hex }) => !hex || !validHex.test(hex))) {
+    throw new Error(
+      'The "Colors" worksheet contains an invalid color. Use 3- or 6-digit hex values such as #5B5CE2.'
+    );
+  }
+
+  const primary = colors.find(
+    ({ role }) => role?.toLowerCase() === "primary"
+  );
+  const secondary = colors.find(
+    ({ role }) => role?.toLowerCase() === "secondary"
+  );
+
+  if (!primary || !secondary) {
+    throw new Error(
+      'The "Colors" worksheet must include rows with Role values "Primary" and "Secondary".'
+    );
+  }
+
+  return {
+    primary: primary.hex,
+    secondary: secondary.hex,
+    palette: colors.map(({ hex }) => hex)
+  };
+};

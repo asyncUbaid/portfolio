@@ -5,7 +5,8 @@ import {
   getExperience,
   getTools,
   getSocials,
-  getStats
+  getStats,
+  getColors
 } from "../services/googleSheets";
 
 export default function usePortfolioData() {
@@ -17,7 +18,8 @@ export default function usePortfolioData() {
     experience: [],
     tools: [],
     socials: [],
-    stats:[]
+    stats:[],
+    colors: null
   });
 
   useEffect(() => {
@@ -25,20 +27,26 @@ export default function usePortfolioData() {
 
     async function loadData() {
       try {
+        let colorsError = null;
         const [
           profile,
           skills,
           experience,
           tools,
           socials,
-          stats
+          stats,
+          colors
         ] = await Promise.all([
           getProfile(),
           getSkills(),
           getExperience(),
           getTools(),
           getSocials(),
-          getStats()
+          getStats(),
+          getColors().catch((loadError) => {
+            colorsError = loadError;
+            return null;
+          })
         ]);
 
         if (active) {
@@ -48,9 +56,14 @@ export default function usePortfolioData() {
             experience,
             tools,
             socials,
-            stats
+            stats,
+            colors
           });
-          setError("");
+          setError(
+            colorsError
+              ? `Could not load the color theme. Using the default palette. ${colorsError.message}`
+              : ""
+          );
         }
       } catch (loadError) {
         if (active) {

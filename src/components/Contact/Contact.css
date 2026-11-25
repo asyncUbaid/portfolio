@@ -41,7 +41,7 @@
 .email-label {
   display: block;
 
-  color: #2563eb;
+  color: var(--primary);
 
   font-weight: 600;
 
@@ -59,7 +59,7 @@
 .copy-btn {
   border: none;
 
-  background: linear-gradient(135deg, #6567ed, #5556d9);
+  background: var(--theme-gradient);
 
   color: white;
 
@@ -75,7 +75,7 @@
 }
 
 .copy-btn:hover {
-  background: #1d4ed8;
+  background: color-mix(in srgb, var(--primary) 82%, #000);
   transform: translateY(-2px);
 }
 
@@ -113,7 +113,7 @@
     0 12px 30px
     rgba(0, 0, 0, 0.12);
 
-  color: #2563eb;
+  color: var(--primary);
 }
 
 /* Mobile */

@@ -26,7 +26,7 @@
 .stat-card h3 {
   font-family: "Manrope", sans-serif;
   font-size: 38px;
-  color: #5b5ce2;
+  color: var(--primary);
   margin-bottom: 6px;
 }
 

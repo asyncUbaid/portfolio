@@ -25,9 +25,32 @@ function App() {
     tools,
     socials,
     stats,
+    colors,
     error: portfolioError,
     retry: retryPortfolioData
   } = usePortfolioData();
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (!colors) {
+      root.style.removeProperty("--primary");
+      root.style.removeProperty("--secondary");
+      root.style.removeProperty("--theme-gradient");
+      root.style.removeProperty("--theme-gradient-vertical");
+      return;
+    }
+
+    root.style.setProperty("--primary", colors.primary);
+    root.style.setProperty("--secondary", colors.secondary);
+    root.style.setProperty(
+      "--theme-gradient",
+      `linear-gradient(135deg, ${colors.palette.join(", ")})`
+    );
+    root.style.setProperty(
+      "--theme-gradient-vertical",
+      `linear-gradient(180deg, ${colors.palette.join(", ")})`
+    );
+  }, [colors]);
 
     useEffect(() => {
     const timer = setTimeout(() => {
