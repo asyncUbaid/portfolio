@@ -1,43 +1,87 @@
 .hero {
-  min-height: 85vh;
+  position: relative;
+  min-height: 88vh;
   display: flex;
   align-items: center;
-  padding: 80px 0;
+  overflow: hidden;
+  padding: 72px 0 110px;
+}
+
+.hero::before,
+.hero::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(2px);
+  pointer-events: none;
+}
+
+.hero::before {
+  width: 480px;
+  height: 480px;
+  right: -180px;
+  top: -220px;
+  background: rgba(91, 92, 226, 0.08);
+}
+
+.hero::after {
+  width: 220px;
+  height: 220px;
+  left: -150px;
+  bottom: 20px;
+  background: rgba(34, 211, 238, 0.08);
 }
 
 .hero-grid {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
-  gap: 80px;
+  gap: 64px;
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 .hero-intro {
   font-size: 20px;
   font-weight: 600;
-  color: #2563eb;
-  margin-bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #5b5ce2;
+  margin-bottom: 14px;
+  letter-spacing: 0.02em;
+}
+
+.hero-intro::before {
+  content: "";
+  width: 32px;
+  height: 2px;
+  border-radius: 2px;
+  background: #5b5ce2;
 }
 
 .hero-name {
-  font-size: 72px;
+  font-family: "Manrope", sans-serif;
+  font-size: clamp(52px, 6vw, 76px);
   font-weight: 800;
-  line-height: 1.1;
-  color: #111827;
-  margin-bottom: 10px;
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+  color: #0b1020;
+  margin-bottom: 16px;
 }
 
 .hero-title {
-  font-size: 36px;
-  font-weight: 600;
-  color: #2563eb;
+  font-family: "Manrope", sans-serif;
+  font-size: clamp(24px, 3vw, 38px);
+  font-weight: 700;
+  color: #5b5ce2;
   margin-bottom: 24px;
 }
 
 .hero-tagline {
   font-size: 18px;
   line-height: 1.8;
-  color: #6b7280;
+  color: #64748b;
   max-width: 550px;
 }
 
@@ -50,23 +94,26 @@
 
 .btn-primary {
   padding: 14px 28px;
-  background: #2563eb;
+  background: linear-gradient(135deg, #6567ed, #5556d9);
   color: white;
   text-decoration: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-weight: 600;
+  box-shadow: 0 12px 28px rgba(91, 92, 226, 0.22);
   transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  background: #1d4ed8;
+  background: #4546c5;
+  box-shadow: 0 16px 32px rgba(91, 92, 226, 0.28);
 }
 
 .btn-secondary {
   padding: 14px 28px;
-  border: 2px solid #2563eb;
-  color: #2563eb;
+  border: 1px solid rgba(91, 92, 226, 0.22);
+  color: #4546c5;
+  background: rgba(255, 255, 255, 0.7);
   text-decoration: none;
   border-radius: 10px;
   font-weight: 600;
@@ -74,8 +121,8 @@
 }
 
 .btn-secondary:hover {
-  background: #2563eb;
-  color: white;
+  background: #eef0ff;
+  color: #4546c5;
   transform: translateY(-2px);
 }
 
@@ -89,31 +136,27 @@
 }
 
 .image-bg {
-  width: 500px;
-  height: 500px;
-  border-radius: 50%;
-
-  background: linear-gradient(
-    135deg,
-    #2563eb,
-    #60a5fa
-  );
+  position: relative;
+  width: 430px;
+  height: 430px;
+  border-radius: 38% 62% 58% 42% / 44% 42% 58% 56%;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.3), transparent),
+    linear-gradient(135deg, #6264e8, #8b5cf6 58%, #22d3ee);
 
   display: flex;
   justify-content: center;
   align-items: center;
-
-  box-shadow: 0 20px 50px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 28px 70px rgba(91, 92, 226, 0.24);
+  animation: morph 9s ease-in-out infinite;
 }
 
 .profile-image {
-  width: 470px;
-  height: 470px;
+  width: 400px;
+  height: 400px;
   border-radius: 50%;
   object-fit: cover;
-
-  border: 6px solid white;
-
+  border: 7px solid rgba(255, 255, 255, 0.92);
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
 }
 
@@ -122,6 +165,11 @@
 @keyframes float {
   0% {
     transform: translateY(0px);
+  }
+
+  @keyframes morph {
+    0%, 100% { border-radius: 38% 62% 58% 42% / 44% 42% 58% 56%; }
+    50% { border-radius: 58% 42% 38% 62% / 52% 58% 42% 48%; }
   }
 
   50% {
@@ -145,13 +193,13 @@
   }
 
   .image-bg {
-    width: 400px;
-    height: 400px;
+    width: 350px;
+    height: 350px;
   }
 
   .profile-image {
-    width: 370px;
-    height: 370px;
+    width: 326px;
+    height: 326px;
   }
 }
 

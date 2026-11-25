@@ -1,5 +1,5 @@
 .stats-section {
-  margin-top: -40px;
+  margin-top: -72px;
   position: relative;
   z-index: 10;
 }
@@ -13,24 +13,24 @@
 }
 
 .stat-card {
-  background: white;
-
-  padding: 30px;
-
-  border-radius: 16px;
-
+  position: relative;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(15, 23, 42, 0.07);
+  padding: 26px 20px;
+  border-radius: 18px;
   text-align: center;
-
-  box-shadow:
-    0 10px 30px rgba(0,0,0,0.08);
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
 }
 
 .stat-card h3 {
-  font-size: 40px;
-  color: #2563eb;
-  margin-bottom: 10px;
+  font-family: "Manrope", sans-serif;
+  font-size: 38px;
+  color: #5b5ce2;
+  margin-bottom: 6px;
 }
 
 .stat-card p {
-  color: #666;
+  color: #64748b;
+  font-weight: 600;
 }

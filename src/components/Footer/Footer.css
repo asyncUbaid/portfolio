@@ -1,7 +1,9 @@
 .footer {
-  background: #111827;
+  background:
+    radial-gradient(circle at 85% 0%, rgba(91,92,226,.28), transparent 22rem),
+    #0d1222;
   color: white;
-  margin-top: 80px;
+  margin-top: 40px;
 }
 
 .footer-content {
@@ -23,7 +25,7 @@
 }
 
 .contact-btn {
-  background: #2563eb;
+  background: linear-gradient(135deg, #6567ed, #5556d9);
   color: white;
 
   border: none;

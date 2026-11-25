@@ -1,6 +1,6 @@
 .tools-section {
-  padding: 100px 0;
-  background: #fafafa;
+  padding: 110px 0;
+  background: #f7f9fc;
 }
 
 .tools-grid {
@@ -12,20 +12,18 @@
 }
 
 .tool-card {
-  padding: 12px 20px;
-
-  border-radius: 30px;
-
-  background: white;
-
-  border: 1px solid #e5e7eb;
-
-  font-weight: 500;
-
+  padding: 11px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(91, 92, 226, 0.12);
+  color: #3f4a5a;
+  font-weight: 700;
   transition: all 0.3s ease;
 }
 
 .tool-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0,0,0,.08);
+  border-color: rgba(91, 92, 226, 0.28);
+  color: #5b5ce2;
+  box-shadow: 0 8px 20px rgba(91, 92, 226, 0.10);
 }
